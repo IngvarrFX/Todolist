@@ -24,3 +24,10 @@
   opacity: 0.5;
 }
 */
+
+.preloader{
+    position: relative;
+    z-index: 100;
+    margin-top: 400px;
+    left: 50%;
+}

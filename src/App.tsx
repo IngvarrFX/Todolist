@@ -1,33 +1,32 @@
-import React, { useCallback } from 'react'
-import './App.css';
-import { TaskType, Todolist } from './Todolist';
-import { AddItemForm } from './AddItemForm';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
-import { Menu } from '@mui/icons-material';
+import React, {useCallback, useEffect} from "react"
+import "./App.css";
+import {Todolist} from "./Todolist";
+import {AddItemForm} from "./AddItemForm";
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import {Menu} from "@mui/icons-material";
 import {
-    addTodolistAC,
+    AddTodolistThunkCr,
     changeTodolistFilterAC,
-    changeTodolistTitleAC,
-    removeTodolistAC
-} from './state/todolists-reducer';
-import { addTaskAC, changeTaskStatusAC, changeTaskTitleAC, removeTaskAC } from './state/tasks-reducer';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppRootStateType } from './state/store';
+    FilterValuesType,
+    GetTodoListsThunkCr,
+    RemoveTodoListThunkCr,
+    TodolistDomainType,
+    UpdateTodoListThunkCr
+} from "./state/todo-lists-reducer";
+import {AddTaskThunkCr, changeTaskStatusAC, changeTaskTitleAC, removeTaskAC} from "./state/tasks-reducer";
+import {useDispatch, useSelector} from "react-redux";
+import {AppRootStateType} from "./state/store";
+import {TaskType} from "./api/tasks-api";
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
 
-
-export type FilterValuesType = 'all' | 'active' | 'completed';
-export type TodolistType = {
-    id: string
-    title: string
-    filter: FilterValuesType
-}
 
 export type TasksStateType = {
     [key: string]: Array<TaskType>
@@ -36,8 +35,7 @@ export type TasksStateType = {
 
 function App() {
 
-    const todolists = useSelector<AppRootStateType, Array<TodolistType>>(state => state.todolists)
-    const tasks = useSelector<AppRootStateType, TasksStateType>(state => state.tasks)
+    const todolists = useSelector<AppRootStateType, Array<TodolistDomainType>>(state => state.todoLists)
     const dispatch = useDispatch();
 
     const removeTask = useCallback(function (id: string, todolistId: string) {
@@ -46,8 +44,7 @@ function App() {
     }, []);
 
     const addTask = useCallback(function (title: string, todolistId: string) {
-        const action = addTaskAC(title, todolistId);
-        dispatch(action);
+        dispatch(AddTaskThunkCr(todolistId, title));
     }, []);
 
     const changeStatus = useCallback(function (id: string, isDone: boolean, todolistId: string) {
@@ -66,19 +63,26 @@ function App() {
     }, []);
 
     const removeTodolist = useCallback(function (id: string) {
-        const action = removeTodolistAC(id);
-        dispatch(action);
+        dispatch(RemoveTodoListThunkCr(id));
     }, []);
 
     const changeTodolistTitle = useCallback(function (id: string, title: string) {
-        const action = changeTodolistTitleAC(id, title);
-        dispatch(action);
+        dispatch(UpdateTodoListThunkCr(title, id));
     }, []);
 
     const addTodolist = useCallback((title: string) => {
-        const action = addTodolistAC(title);
-        dispatch(action);
+        dispatch(AddTodolistThunkCr(title));
     }, [dispatch]);
+
+    useEffect(() => {
+        dispatch(GetTodoListsThunkCr())
+    }, [])
+
+    if (!todolists.length) {
+        return <Box className={"preloader"} sx={{display: "flex"}}>
+            <CircularProgress/>
+        </Box>
+    }
 
     return (
         <div className="App">
@@ -94,20 +98,17 @@ function App() {
                 </Toolbar>
             </AppBar>
             <Container fixed>
-                <Grid container style={{padding: '20px'}}>
+                <Grid container style={{padding: "20px"}}>
                     <AddItemForm addItem={addTodolist}/>
                 </Grid>
                 <Grid container spacing={3}>
                     {
                         todolists.map(tl => {
-                            let allTodolistTasks = tasks[tl.id];
-
                             return <Grid item key={tl.id}>
-                                <Paper style={{padding: '10px'}}>
+                                <Paper style={{padding: "10px"}}>
                                     <Todolist
                                         id={tl.id}
                                         title={tl.title}
-                                        tasks={allTodolistTasks}
                                         removeTask={removeTask}
                                         changeFilter={changeFilter}
                                         addTask={addTask}
