@@ -1,4 +1,5 @@
 import axios from "axios";
+import {StatusAppType} from "../state/app-reducer";
 
 
 const instance = axios.create({
@@ -22,6 +23,7 @@ export type TaskType = {
     title: string
     todoListId: string
     completed: boolean
+    taskStatus: StatusAppType
 }
 
 interface UpdateTaskType {

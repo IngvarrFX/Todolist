@@ -4,21 +4,25 @@ import {Delete} from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
 import Checkbox from "@mui/material/Checkbox";
 import {TaskStatuses, TaskType} from "./api/tasks-api";
+import {StatusAppType} from "./state/app-reducer";
+import preloader from "./assets/preloader.gif"
+import {CircularProgress} from "@mui/material";
 
 
 type TaskPropsType = {
     task: TaskType
     todolistId: string
-    changeTaskStatus: (id: string, isDone: boolean, todolistId: string) => void
+    changeTaskStatus: (id: string, status: TaskStatuses, todolistId: string) => void
     changeTaskTitle: (taskId: string, newTitle: string, todolistId: string) => void
     removeTask: (taskId: string, todolistId: string) => void
+    taskStatus?: StatusAppType
 }
 export const Task = React.memo((props: TaskPropsType) => {
     const onClickHandler = useCallback(() => props.removeTask(props.task.id, props.todolistId), [props.task.id, props.todolistId]);
 
     const onChangeHandler = useCallback((e: ChangeEvent<HTMLInputElement>) => {
         let newIsDoneValue = e.currentTarget.checked
-        props.changeTaskStatus(props.task.id, newIsDoneValue, props.todolistId)
+        props.changeTaskStatus(props.task.id, newIsDoneValue ? TaskStatuses.Completed : TaskStatuses.New, props.todolistId)
     }, [props.task.id, props.todolistId]);
 
     const onTitleChangeHandler = useCallback((newValue: string) => {
@@ -31,11 +35,13 @@ export const Task = React.memo((props: TaskPropsType) => {
             checked={props.task.status === TaskStatuses.Completed}
             color="primary"
             onChange={onChangeHandler}
+            disabled={props.taskStatus === "loading"}
         />
 
-        <EditableSpan value={props.task.title} onChange={onTitleChangeHandler}/>
-        <IconButton onClick={onClickHandler}>
+        <EditableSpan value={props.task.title} onChange={onTitleChangeHandler}  disabled={props.taskStatus === "loading"}/>
+        <IconButton onClick={onClickHandler} disabled={props.taskStatus === "loading"}>
             <Delete/>
         </IconButton>
+        {props.taskStatus === "loading" && <CircularProgress size={"15px"}/>}
     </div>
 })

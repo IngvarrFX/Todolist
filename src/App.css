@@ -31,3 +31,6 @@
     margin-top: 400px;
     left: 50%;
 }
+.progressBar{
+    min-height: 4px;
+}
