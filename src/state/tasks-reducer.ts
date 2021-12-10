@@ -93,8 +93,8 @@ export const GetTasksThunkCr = (todoId: string): ThunkTaskType => async (dispatc
             handleServerNetworkError(error.message, dispatch)
         })
 }
-export const AddTaskThunkCr = (todoId: string, title: string): ThunkTaskType => (dispatch: AppDispatch) => {
-    dispatch(setStatusAppAC("loading"))
+export const AddTaskThunkCr = (todoId: string, title: string): ThunkTaskType => async (dispatch: AppDispatch) => {
+    await dispatch(setStatusAppAC("loading"))
     tasksAPI.createTasks(todoId, title)
         .then((res) => {
             if (res.data.resultCode === 0) {
@@ -104,9 +104,10 @@ export const AddTaskThunkCr = (todoId: string, title: string): ThunkTaskType => 
                 handleServerAppError(res.data, dispatch)
             }
         })
-        .catch((e: any) => {
-            handleServerNetworkError(e.message, dispatch)
-        }).finally(() => {
+        .catch((error) => {
+            handleServerNetworkError(error.message, dispatch)
+        })
+        .finally(() => {
         dispatch(setStatusAppAC("succeeded"))
     })
 }
@@ -124,6 +125,9 @@ export const UpdateTaskTitleThunkCr = (taskId: string, title: string, todoId: st
         .catch((error) => {
             handleServerNetworkError(error.message, dispatch)
         })
+        .finally(() => {
+            dispatch(setStatusAppAC("succeeded"))
+        })
 }
 
 export const RemoveTaskThunkCr = (todoId: string, taskId: string): ThunkTaskType => async (dispatch: AppDispatch) => {
@@ -140,6 +144,9 @@ export const RemoveTaskThunkCr = (todoId: string, taskId: string): ThunkTaskType
         })
         .catch((error) => {
             handleServerNetworkError(error.message, dispatch)
+        })
+        .finally(() => {
+            dispatch(setStatusAppAC("succeeded"))
         })
 }
 

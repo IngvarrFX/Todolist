@@ -69,6 +69,9 @@ export const GetTodoListsThunkCr = (): ThunkTodoType => async (dispatch: AppDisp
         .catch((error) => {
             handleServerNetworkError(error.message, dispatch)
         })
+        .finally(() => {
+            dispatch(setStatusAppAC("succeeded"))
+        })
 }
 
 export const AddTodolistThunkCr = (title: string): ThunkTodoType => async (dispatch: AppDispatch) => {
@@ -82,9 +85,11 @@ export const AddTodolistThunkCr = (title: string): ThunkTodoType => async (dispa
                 handleServerAppError(res.data, dispatch)
             }
         })
-        .catch((e) => {
-            console.log(e)
-            handleServerNetworkError(e.message, dispatch)
+        .catch((error) => {
+            handleServerNetworkError(error.message, dispatch)
+        })
+        .finally(() => {
+            dispatch(setStatusAppAC("succeeded"))
         })
 }
 
@@ -103,6 +108,9 @@ export const RemoveTodoListThunkCr = (todoId: string): ThunkTodoType => async (d
         .catch((error) => {
             handleServerNetworkError(error.message, dispatch)
         })
+        .finally(() => {
+            dispatch(setStatusAppAC("succeeded"))
+        })
 }
 
 export const UpdateTodoListThunkCr = (title: string, todoId: string): ThunkTodoType => async (dispatch: AppDispatch) => {
@@ -118,6 +126,9 @@ export const UpdateTodoListThunkCr = (title: string, todoId: string): ThunkTodoT
         })
         .catch((error) => {
             handleServerNetworkError(error.message, dispatch)
+        })
+        .finally(() => {
+            dispatch(setStatusAppAC("succeeded"))
         })
 }
 
