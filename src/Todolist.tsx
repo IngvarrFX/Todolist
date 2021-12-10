@@ -6,14 +6,12 @@ import Button from "@mui/material/Button";
 import {Delete} from "@mui/icons-material";
 import {Task} from "./Task"
 import {FilterValuesType, TodolistStatus} from "./state/todo-lists-reducer";
-import {TaskStatuses, TaskType} from "./api/tasks-api";
-import {GetTasksThunkCr} from "./state/tasks-reducer";
+import {TaskStatuses} from "./api/tasks-api";
+import {GetTasksThunkCr, ITasksType} from "./state/tasks-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootStateType} from "./state/store";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
-import {StatusAppType} from "./state/app-reducer";
-import {ShowError} from "./componets/ShowError";
 
 
 type PropsType = {
@@ -30,9 +28,8 @@ type PropsType = {
     todoStatus: TodolistStatus
 }
 
-export const Todolist = function (props: PropsType) {
-    console.log("Todolist called")
-    const tasks = useSelector<AppRootStateType, Array<TaskType>>(state => state.tasks[props.id])
+export const Todolist = React.memo((props: PropsType) => {
+    const tasks = useSelector<AppRootStateType, Array<ITasksType>>(state => state.tasks[props.id])
     const dispatch = useDispatch()
 
     useEffect(() => {
@@ -71,7 +68,7 @@ export const Todolist = function (props: PropsType) {
     }
 
     return <div>
-        <h3><EditableSpan value={props.title} onChange={changeTodolistTitle}/>
+        <h3><EditableSpan value={props.title} onChange={changeTodolistTitle} disabled={props.todoStatus === "loading"}/>
             <IconButton onClick={removeTodolist} disabled={props.todoStatus === "loading"}>
                 <Delete/>
             </IconButton>
@@ -83,7 +80,7 @@ export const Todolist = function (props: PropsType) {
                                                 removeTask={props.removeTask}
                                                 changeTaskTitle={props.changeTaskTitle}
                                                 changeTaskStatus={props.changeTaskStatus}
-                                                taskStatus={t.taskStatus}
+                                                taskStatus={t.taskStatus!}
                 />)
             }
         </div>
@@ -103,6 +100,6 @@ export const Todolist = function (props: PropsType) {
             </Button>
         </div>
     </div>
-}
+})
 
 

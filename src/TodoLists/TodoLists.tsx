@@ -7,7 +7,7 @@ import {
     FilterValuesType,
     GetTodoListsThunkCr,
     RemoveTodoListThunkCr,
-    TodolistDomainType, TodolistStatus,
+    TodolistDomainType,
     UpdateTodoListThunkCr
 } from "../state/todo-lists-reducer";
 import {useDispatch, useSelector} from "react-redux";
@@ -18,11 +18,10 @@ import {AddItemForm} from "../AddItemForm";
 import Paper from "@mui/material/Paper";
 import {Todolist} from "../Todolist";
 import {useNavigate} from "react-router-dom";
-import {StatusAppType} from "../state/app-reducer";
 import {ShowError} from "../componets/ShowError";
 
 
-export const TodoLists = () => {
+export const TodoLists =  React.memo( () => {
     const todoLists = useSelector<AppRootStateType, Array<TodolistDomainType>>(state => state.todoLists)
     const initialized = useSelector<AppRootStateType, boolean>(state => state.app.initializedApp)
     const isLogin = useSelector<AppRootStateType, boolean>(state => state.app.isLogin)
@@ -108,4 +107,4 @@ export const TodoLists = () => {
         </Container>
         {error && <ShowError/>}
     </div>
-}
+})

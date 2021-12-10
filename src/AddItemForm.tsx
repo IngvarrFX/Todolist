@@ -9,8 +9,7 @@ type AddItemFormPropsType = {
     todoStatus?: TodolistStatus
 }
 
-export const AddItemForm = React.memo(function (props: AddItemFormPropsType) {
-    console.log('AddItemForm called')
+export const AddItemForm = React.memo( (props: AddItemFormPropsType) => {
 
     let [title, setTitle] = useState('')
     let [error, setError] = useState<string | null>(null)
@@ -45,6 +44,7 @@ export const AddItemForm = React.memo(function (props: AddItemFormPropsType) {
                    onKeyPress={onKeyPressHandler}
                    label="Title"
                    helperText={error}
+                   disabled={props.todoStatus === "loading"}
         />
         <IconButton color="primary" onClick={addItem} disabled={props.todoStatus === "loading"}>
             <AddBox/>

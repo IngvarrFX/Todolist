@@ -1,6 +1,9 @@
 import {todoListsAPI, TodolistType} from "../api/todolist-api";
 import {Dispatch} from "redux";
 import {setErrorAppAC, setStatusAppAC} from "./app-reducer";
+import {handleServerAppError, handleServerNetworkError} from "../utils/errors-utils";
+import {AppDispatch, AppRootStateType} from "./store";
+import { ThunkAction } from "redux-thunk";
 
 
 export type RemoveTodolistActionType = {
@@ -101,7 +104,7 @@ export const changeTodolistEntityStatusAC = (payload: { todolistId: string, enti
 } as const)
 
 
-export const GetTodoListsThunkCr = () => async (dispatch: Dispatch) => {
+export const GetTodoListsThunkCr = ():ThunkTodoType => async (dispatch: AppDispatch) => {
     dispatch(setStatusAppAC("loading"))
     const todos = await todoListsAPI.getTodolist()
     try {
@@ -109,61 +112,58 @@ export const GetTodoListsThunkCr = () => async (dispatch: Dispatch) => {
         dispatch(setStatusAppAC("succeeded"))
 
     } catch (error) {
-        dispatch(setErrorAppAC(error))
-        dispatch(setStatusAppAC("failed"))
+        handleServerNetworkError(error.message, dispatch)
     }
 }
 
-export const AddTodolistThunkCr = (title: string) => async (dispatch: Dispatch) => {
+export const AddTodolistThunkCr = (title: string):ThunkTodoType => async (dispatch: AppDispatch) => {
     dispatch(setStatusAppAC("loading"))
-    const todos = await todoListsAPI.createTodolist(title)
+    const res = await todoListsAPI.createTodolist(title)
     try {
-        if (todos.data.resultCode === 0) {
-            dispatch(addTodolistAC(todos.data.data.item))
+        if (res.data.resultCode === 0) {
+            dispatch(addTodolistAC(res.data.data.item))
             dispatch(setStatusAppAC("succeeded"))
         } else {
-            dispatch(setErrorAppAC(todos.data.messages[0]))
-            dispatch(setStatusAppAC("failed"))
+            handleServerAppError(res.data, dispatch)
         }
 
     } catch (error) {
-        console.log(error)
-        dispatch(setStatusAppAC("failed"))
+        handleServerNetworkError(error.message, dispatch)
     }
 }
 
-export const RemoveTodoListThunkCr = (todoId: string) => async (dispatch: Dispatch) => {
+export const RemoveTodoListThunkCr = (todoId: string):ThunkTodoType => async (dispatch: AppDispatch) => {
     dispatch(setStatusAppAC("loading"))
     dispatch(changeTodolistEntityStatusAC({todolistId: todoId, entityStatus: "loading"}))
-    const todos = await todoListsAPI.deleteTodolist(todoId)
+    const res = await todoListsAPI.deleteTodolist(todoId)
     try {
-        if (todos.data.resultCode === 0) {
+        if (res.data.resultCode === 0) {
             dispatch(removeTodolistAC(todoId))
             dispatch(setStatusAppAC("succeeded"))
         } else {
-            dispatch(setErrorAppAC(todos.data.messages[0]))
-            dispatch(setStatusAppAC("failed"))
+            handleServerAppError(res.data, dispatch)
         }
     } catch (error) {
-        console.log(error)
-        dispatch(setStatusAppAC("failed"))
+        handleServerNetworkError(error.message, dispatch)
     }
 }
 
-export const UpdateTodoListThunkCr = (title: string, todoId: string) => async (dispatch: Dispatch) => {
+export const UpdateTodoListThunkCr = (title: string, todoId: string):ThunkTodoType => async (dispatch: AppDispatch) => {
     dispatch(setStatusAppAC("loading"))
-    const todos = await todoListsAPI.updateTodolist(todoId, title)
+    const res = await todoListsAPI.updateTodolist(todoId, title)
     try {
-        if (todos.data.resultCode === 0) {
+        if (res.data.resultCode === 0) {
             dispatch(changeTodolistTitleAC(todoId, title))
             dispatch(setStatusAppAC("succeeded"))
         } else {
-            dispatch(setErrorAppAC(todos.data.messages[0]))
-            dispatch(setStatusAppAC("failed"))
+            handleServerAppError(res.data, dispatch)
         }
     } catch (error) {
-        console.log(error)
-        dispatch(setStatusAppAC("failed"))
+        handleServerNetworkError(error.message, dispatch)
     }
 }
+
+
+//types thunks
+type ThunkTodoType = ThunkAction<void, AppRootStateType, unknown, ActionsType>
 

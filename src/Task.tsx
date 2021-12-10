@@ -3,14 +3,13 @@ import {EditableSpan} from "./EditableSpan"
 import {Delete} from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
 import Checkbox from "@mui/material/Checkbox";
-import {TaskStatuses, TaskType} from "./api/tasks-api";
+import {ITaskType, TaskStatuses} from "./api/tasks-api";
 import {StatusAppType} from "./state/app-reducer";
-import preloader from "./assets/preloader.gif"
 import {CircularProgress} from "@mui/material";
 
 
 type TaskPropsType = {
-    task: TaskType
+    task: ITaskType
     todolistId: string
     changeTaskStatus: (id: string, status: TaskStatuses, todolistId: string) => void
     changeTaskTitle: (taskId: string, newTitle: string, todolistId: string) => void

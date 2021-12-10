@@ -11,19 +11,18 @@ const instance = axios.create({
 })
 
 
-export type TaskType = {
-    addedDate: string
-    deadline: null
-    description: null
-    id: string
-    order: number
-    priority: number
-    startDate: null
-    status: number
-    title: string
-    todoListId: string
-    completed: boolean
-    taskStatus: StatusAppType
+export interface ITaskType  {
+    addedDate: string,
+    deadline: null,
+    description: null,
+    id: string,
+    order: number,
+    priority: number,
+    startDate: null,
+    status: number,
+    title: string,
+    todoListId: string,
+    completed: boolean,
 }
 
 interface UpdateTaskType {
@@ -37,7 +36,7 @@ interface UpdateTaskType {
 }
 
 type ItemType = {
-    item: TaskType
+    item: ITaskType
 }
 
 type CreateTaskType<T = {}> = {
@@ -49,7 +48,7 @@ type CreateTaskType<T = {}> = {
 
 interface ResponseType {
     error: null
-    items: Array<TaskType>
+    items: Array<ITaskType>
     totalCount: number
 }
 

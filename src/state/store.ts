@@ -13,8 +13,11 @@ const rootReducer = combineReducers({
 })
 // непосредственно создаём store
 export const store = createStore(rootReducer, applyMiddleware(thunk));
+export type AppRootStateType = ReturnType<typeof store.getState>
+// Inferred type: {tasks: tasksReducer, todoLists: todoListsReducer, app: AppReducer}
+export type AppDispatch = typeof store.dispatch
 // определить автоматически тип всего объекта состояния
-export type AppRootStateType = ReturnType<typeof rootReducer>
+//export type AppRootStateType = ReturnType<typeof rootReducer>
 
 // а это, чтобы можно было в консоли браузера обращаться к store в любой момент
 // @ts-ignore
