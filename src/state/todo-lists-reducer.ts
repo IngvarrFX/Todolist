@@ -88,13 +88,7 @@ export const AddTodolistThunkCr = (title: string): ThunkTodoType => async (dispa
     } catch (e) {
 
     }
-    /*      .catch((error) => {
-              handleServerNetworkError(error.message, dispatch)
-          })
-          .finally(() => {
-              dispatch(setStatusAppAC("succeeded"))
-          })*/
-    window.addEventListener('unhandledrejection', function(event) {
+    window.addEventListener("unhandledrejection", function (event) {
         alert(event.promise); // [object Promise] - промис, который сгенерировал ошибку
         alert(event.reason); // Error: Ошибка! - объект ошибки, которая не была обработана
     });
