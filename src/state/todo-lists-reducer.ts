@@ -76,21 +76,28 @@ export const GetTodoListsThunkCr = (): ThunkTodoType => async (dispatch: AppDisp
 
 export const AddTodolistThunkCr = (title: string): ThunkTodoType => async (dispatch: AppDispatch) => {
     dispatch(setStatusAppAC("loading"))
-    await todoListsAPI.createTodolist(title)
-        .then((res) => {
-            if (res.data.resultCode === 0) {
-                dispatch(addTodolistAC(res.data.data.item))
-                dispatch(setStatusAppAC("succeeded"))
-            } else {
-                handleServerAppError(res.data, dispatch)
-            }
-        })
-        .catch((error) => {
-            handleServerNetworkError(error.message, dispatch)
-        })
-        .finally(() => {
+    const res = await todoListsAPI.createTodolist(title)
+    try {
+        /* .then((res) => {*/
+        if (res.data.resultCode === 0) {
+            dispatch(addTodolistAC(res.data.data.item))
             dispatch(setStatusAppAC("succeeded"))
-        })
+        } else {
+            handleServerAppError(res.data, dispatch)
+        }
+    } catch (e) {
+
+    }
+    /*      .catch((error) => {
+              handleServerNetworkError(error.message, dispatch)
+          })
+          .finally(() => {
+              dispatch(setStatusAppAC("succeeded"))
+          })*/
+    window.addEventListener('unhandledrejection', function(event) {
+        alert(event.promise); // [object Promise] - промис, который сгенерировал ошибку
+        alert(event.reason); // Error: Ошибка! - объект ошибки, которая не была обработана
+    });
 }
 
 export const RemoveTodoListThunkCr = (todoId: string): ThunkTodoType => async (dispatch: AppDispatch) => {

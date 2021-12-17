@@ -111,7 +111,7 @@ export const AddTaskThunkCr = (todoId: string, title: string): ThunkTaskType => 
         dispatch(setStatusAppAC("succeeded"))
     })
 }
-export const UpdateTaskTitleThunkCr = (taskId: string, title: string, todoId: string): ThunkTaskType => async (dispatch: AppDispatch) => {
+export const UpdateTaskTitleThunkCr = (taskId: string, title: string, todoId: string): ThunkTaskType => async (dispatch: AppDispatch): Promise<any> => {
     dispatch(setStatusAppAC("loading"))
     await tasksAPI.updateTasks(todoId, taskId, title)
         .then((res) => {
